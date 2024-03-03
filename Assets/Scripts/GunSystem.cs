@@ -1,7 +1,8 @@
 using UnityEngine;
 using TMPro;
+using Unity.Netcode;
 
-public class GunSystem : MonoBehaviour
+public class GunSystem : NetworkBehaviour
 {
     // Gun stats
     public int damage;
@@ -25,15 +26,21 @@ public class GunSystem : MonoBehaviour
     public GameObject muzzleFlash, bulletHoleGraphic;
     // public TextMeshProUGUI text;
 
-
-    private void Awake()
+    public override void OnNetworkSpawn()
     {
-        bulletsLeft = magazineSize;
+        if (!IsOwner)
+            this.enabled = false;
+        
+
+        // initialize ammo count on spawn
         readyToShoot = true;
+        bulletsLeft = magazineSize;
     }
 
     private void Update()
     {
+        if (!IsOwner) return;
+        
         MyInput();
 
         //SetText
@@ -52,11 +59,14 @@ public class GunSystem : MonoBehaviour
         if (readyToShoot && shooting && !reloading && bulletsLeft > 0)
         {
             bulletsShot = bulletsPerTap;
-            Shoot();
+            ShootServerRpc();
+            Debug.Log(bulletsLeft);
         }
     }
 
-    private void Shoot()
+    // This method is called by clients (including the host) to request shooting.
+    [ServerRpc]
+    public void ShootServerRpc()
     {
         readyToShoot = false;
 
@@ -67,7 +77,6 @@ public class GunSystem : MonoBehaviour
 
         // Calculate direction with spread
         Vector3 direction = fpsCam.transform.forward + new Vector3(x, y, 0);
-        
 
         //RayCast
         if (Physics.Raycast(fpsCam.transform.position, direction, out rayHit, range))
@@ -81,14 +90,9 @@ public class GunSystem : MonoBehaviour
         // ShakeCamera
         // camShake.Shake(camShakeDuration, camShakeMagnitude);
 
-        // Graphics
-        Instantiate(bulletHoleGraphic, rayHit.point, Quaternion.LookRotation(rayHit.normal));
-        // Instantiate muzzle flash at gun's firing point
-        GameObject flashInstance = Instantiate(muzzleFlash, attackPoint.position, Quaternion.identity);
 
-        // Destroy the muzzle flash object after 1 second
-        Destroy(flashInstance, 0.3f);
-
+        CreateBulletHoleClientRpc(rayHit.point, Quaternion.LookRotation(rayHit.normal));
+        CreateMuzzleFlashClientRpc(attackPoint.position, Quaternion.identity);
 
         bulletsLeft--;
         bulletsShot--;
@@ -96,6 +100,31 @@ public class GunSystem : MonoBehaviour
 
         if (bulletsShot > 0 && bulletsLeft > 0)
             Invoke("Shoot", timeBetweenShots);
+
+        // Update the client's ammo count
+        UpdateAmmoCountClientRpc(bulletsLeft);
+    }
+
+    [ClientRpc]
+    private void UpdateAmmoCountClientRpc(int count)
+    {
+        bulletsLeft = count;
+    }
+
+
+    [ClientRpc]
+    public void CreateMuzzleFlashClientRpc(Vector3 position, Quaternion rotation)
+    {
+        // Instantiate the muzzle flash effect locally for each client here
+        GameObject flashInstance = Instantiate(muzzleFlash, position, rotation);
+        Destroy(flashInstance, 0.3f); // Destroy the muzzle flash object after 0.3 seconds
+    }
+
+    // Call this method within your Shoot method after a successful hit detection
+    [ClientRpc]
+    public void CreateBulletHoleClientRpc(Vector3 position, Quaternion rotation)
+    {
+        Instantiate(bulletHoleGraphic, position, rotation);
     }
 
     private void ResetShot()

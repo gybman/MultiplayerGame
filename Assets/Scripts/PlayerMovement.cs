@@ -53,7 +53,7 @@ public class PlayerMovement : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (!IsOwner) Destroy(this);
+        if (!IsOwner) this.enabled = false;
     }
 
 
