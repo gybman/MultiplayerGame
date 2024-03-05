@@ -14455,7 +14455,7 @@ GameObject:
   - component: {fileID: 198000012942003240}
   - component: {fileID: 199000010939959374}
   - component: {fileID: 8886371879185542003}
-  - component: {fileID: 7216990782359697842}
+  - component: {fileID: 4705835570280893946}
   m_Layer: 0
   m_Name: SmallExplosionEffect
   m_TagString: Untagged
@@ -14491,7 +14491,7 @@ ParticleSystem:
   serializedVersion: 8
   lengthInSec: 4
   simulationSpeed: 2
-  stopAction: 2
+  stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
@@ -19175,7 +19175,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000013462590818}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
@@ -19189,7 +19189,7 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &7216990782359697842
+--- !u!114 &4705835570280893946
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -19201,4 +19201,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 523601cd7a8a7c044a52df14417f35ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayBeforeDestroy: 5
+  delayBeforeDestroy: 1.5

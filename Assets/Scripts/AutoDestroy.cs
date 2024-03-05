@@ -1,16 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
 
-public class AutoDestroy : NetworkBehaviour
+public class AutoDestroy : MonoBehaviour
 {
     public float delayBeforeDestroy = 5f;
 
-    [ServerRpc(RequireOwnership = false)]
-    private void DestroyParticlesServerRpc()
+    private void Start()
     {
-        GetComponent<NetworkObject>().Despawn();
+        // Start a coroutine to destroy the particle effect after the specified delay
+        StartCoroutine(DestroyAfterDelay(delayBeforeDestroy));
+    }
+
+    private IEnumerator DestroyAfterDelay(float delay)
+    {
+        // Wait for the specified delay
+        yield return new WaitForSeconds(delay);
+
+        // Call the destruction method on the server
         Destroy(gameObject, delayBeforeDestroy);
     }
 }
