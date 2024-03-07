@@ -26,7 +26,7 @@ public class PlayerSpawner : MonoBehaviour
     private void RespawnAtRandomPosition()
     {
         // Example: Respawn at a random position within a certain range
-        Vector3 respawnPosition = new Vector3(Random.Range(-20f, 20f), 0f, Random.Range(-20f, 20f));
-        transform.position = respawnPosition;
+        Vector3 respawnPosition = new Vector3(Random.Range(-20f, 20f), 2f, Random.Range(-20f, 20f));
+        player.transform.position = respawnPosition;
     }
 }

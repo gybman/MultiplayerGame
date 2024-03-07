@@ -24,10 +24,13 @@ public class MoveProjectiles : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        GameObject hitImpact = Instantiate(hitParticles, transform.position, Quaternion.identity);
-        hitImpact.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
+        if(other.gameObject != playerOwner)
+        {
+            GameObject hitImpact = Instantiate(hitParticles, transform.position, Quaternion.identity);
+            hitImpact.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
 
-        parent.ballDestroyed();
-        Destroy(gameObject);
+            parent.ballDestroyed();
+            Destroy(gameObject);
+        }
     }
 }
