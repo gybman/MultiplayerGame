@@ -739,6 +739,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 5499492353581213489}
   gun: {fileID: 4887259015197888124}
+  spawnPoints:
+  - {fileID: 0}
   respawnDelay: 3
 --- !u!1001 &4281582042244831142
 PrefabInstance:

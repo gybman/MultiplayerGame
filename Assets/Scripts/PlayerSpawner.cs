@@ -6,9 +6,25 @@ public class PlayerSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject gun;
+    public Transform[] spawnPoints;
 
     public float respawnDelay = 3f;
-        
+
+    private void Start()
+    {
+        // Find all game objects with the "SpawnPoint" tag
+        GameObject[] spawnPointObjects = GameObject.FindGameObjectsWithTag("SpawnPoint");
+
+        // Initialize the spawnPoints array with the same size as the spawnPointObjects array
+        spawnPoints = new Transform[spawnPointObjects.Length];
+
+        // Populate the spawnPoints array with the transform components of the spawn point game objects
+        for (int i = 0; i < spawnPointObjects.Length; i++)
+        {
+            spawnPoints[i] = spawnPointObjects[i].transform;
+        }
+    }
+
     public IEnumerator RespawnAfterDelay()
     {
         Debug.Log("Entered respawn");
@@ -25,8 +41,11 @@ public class PlayerSpawner : MonoBehaviour
 
     private void RespawnAtRandomPosition()
     {
-        // Example: Respawn at a random position within a certain range
-        Vector3 respawnPosition = new Vector3(Random.Range(-20f, 20f), 2f, Random.Range(-20f, 20f));
+        // Generate a random index within the range of the spawnPoints array
+        int randomIndex = Random.Range(0, spawnPoints.Length);
+
+        // Get the position of the selected spawn point
+        Vector3 respawnPosition = spawnPoints[randomIndex].position;
         player.transform.position = respawnPosition;
     }
 }
