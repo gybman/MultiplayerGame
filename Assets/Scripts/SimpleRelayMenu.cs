@@ -71,4 +71,10 @@ public class SimpleRelayMenu : MonoBehaviour
             _buttons.SetActive(true);
         }
     }
+
+    public void ActivateMenu()
+    {
+        _buttons.SetActive(true);
+        _timer.SetActive(false);
+    }
 }
