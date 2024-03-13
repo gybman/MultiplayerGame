@@ -1,17 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
+using Unity.Netcode.Components;
 
-public class PlayerSpawner : MonoBehaviour
+public class PlayerSpawner : NetworkBehaviour
 {
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject gun;
+    [SerializeField] private GameObject deathScreen;
+
     public Transform[] spawnPoints;
 
     public float respawnDelay = 3f;
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
+        base.OnNetworkSpawn();
+        deathScreen.SetActive(false);
+
         // Find all game objects with the "SpawnPoint" tag
         GameObject[] spawnPointObjects = GameObject.FindGameObjectsWithTag("SpawnPoint");
 
@@ -23,20 +30,29 @@ public class PlayerSpawner : MonoBehaviour
         {
             spawnPoints[i] = spawnPointObjects[i].transform;
         }
+
+        RespawnAtRandomPosition();
     }
 
     public IEnumerator RespawnAfterDelay()
     {
         Debug.Log("Entered respawn");
+        player.GetComponent<NetworkTransform>().Interpolate = false;
         player.SetActive(false);
-        gun.SetActive(false);
+        gun.GetComponent<ShootBall>().enabled = false;
+        deathScreen.SetActive(true);
         // Wait for the respawn delay
         yield return new WaitForSeconds(respawnDelay);
 
         // Respawn the player at a random position
         RespawnAtRandomPosition();
+
+        deathScreen.SetActive(false);
         player.SetActive(true);
-        gun.SetActive(true);
+        gun.GetComponent<ShootBall>().enabled = true;
+        yield return new WaitForSeconds(0.5f);
+        player.GetComponent<NetworkTransform>().Interpolate = true;
+
     }
 
     private void RespawnAtRandomPosition()
