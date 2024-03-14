@@ -38,8 +38,7 @@ public class PlayerSpawner : NetworkBehaviour
     {
         Debug.Log("Entered respawn");
         player.GetComponent<NetworkTransform>().Interpolate = false;
-        player.SetActive(false);
-        gun.GetComponent<ShootBall>().enabled = false;
+        DisablePlayer();
         deathScreen.SetActive(true);
         // Wait for the respawn delay
         yield return new WaitForSeconds(respawnDelay);
@@ -48,8 +47,7 @@ public class PlayerSpawner : NetworkBehaviour
         RespawnAtRandomPosition();
 
         deathScreen.SetActive(false);
-        player.SetActive(true);
-        gun.GetComponent<ShootBall>().enabled = true;
+        EnablePlayer();
         yield return new WaitForSeconds(0.5f);
         player.GetComponent<NetworkTransform>().Interpolate = true;
 
@@ -63,5 +61,17 @@ public class PlayerSpawner : NetworkBehaviour
         // Get the position of the selected spawn point
         Vector3 respawnPosition = spawnPoints[randomIndex].position;
         player.transform.position = respawnPosition;
+    }
+
+    public void DisablePlayer()
+    {
+        player.SetActive(false);
+        gun.GetComponent<ShootBall>().enabled = false;
+    }
+
+    public void EnablePlayer()
+    {
+        player.SetActive(true);
+        gun.GetComponent<ShootBall>().enabled = true;
     }
 }

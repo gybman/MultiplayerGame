@@ -304,6 +304,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   killCount:
     m_InternalValue: 0
+  playerColor: {fileID: 5499492353581213482}
 --- !u!1 &5499492351892260853
 GameObject:
   m_ObjectHideFlags: 0
@@ -663,6 +664,7 @@ GameObject:
   - component: {fileID: 558464429504288975}
   - component: {fileID: 3173795993809143676}
   - component: {fileID: 7943176414618500939}
+  - component: {fileID: 8676575645310097839}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -853,6 +855,19 @@ MonoBehaviour:
   defaultHealth: 3
   respawnDelay: 3
   spawner: {fileID: 7252423616202207478}
+--- !u!114 &8676575645310097839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5499492353581213489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13e5a2eebeef0394ab4ca1e9a8fcc923, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _renderer: {fileID: 5499492353581213482}
 --- !u!1 &5912542165747421978
 GameObject:
   m_ObjectHideFlags: 0

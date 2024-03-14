@@ -8,6 +8,9 @@ public class PlayerStatsManager : NetworkBehaviour
     // Define network variables for player stats
     public NetworkVariable<int> killCount = new NetworkVariable<int>(0);
 
+    public Renderer playerColor;
+    public ulong PlayerId => NetworkObjectId; // Using NetworkObjectId as a unique identifier
+
     public static event Action OnKillCountChanged;
 
     // Method to increment kill count
@@ -33,4 +36,21 @@ public class PlayerStatsManager : NetworkBehaviour
         killCount.Value++;
         OnKillCountChanged?.Invoke();
     }
+
+    public void ResetKillCount()
+    {
+        if (IsServer)
+        {
+            killCount.Value = 0;
+            OnKillCountChanged?.Invoke();
+        }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        base.OnNetworkDespawn();
+
+        FindObjectOfType<ScoreBoard>().ResetLocalPlayerData();
+    }
+
 }

@@ -37,6 +37,8 @@ public class ShootBall : NetworkBehaviour
         GameObject fireball = Instantiate(fireballPrefab, shootTransform.position, shootTransform.rotation);
         fireball.GetComponent<MoveProjectiles>().parent = this;
         fireball.GetComponent<MoveProjectiles>().playerOwner = player;
+        Renderer renderer = fireball.GetComponent<Renderer>();
+        renderer.material.color = player.GetComponent<Renderer>().material.color;
     }
 
     [ServerRpc]

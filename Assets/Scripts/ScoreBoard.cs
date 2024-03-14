@@ -3,12 +3,14 @@ using UnityEngine;
 using TMPro;
 using Unity.Netcode;
 using System.Collections;
+using System.Linq;
 
 public class ScoreBoard : NetworkBehaviour
 {
     public TMP_Text scoreboardText;
-    public bool test;
-
+    private Dictionary<ulong, PlayerStatsManager> playerStatsManagers = new Dictionary<ulong, PlayerStatsManager>();
+    private Dictionary<ulong, int> playerNumbers = new Dictionary<ulong, int>();
+    private int nextPlayerNumber = 1;
     public override void OnNetworkSpawn()
     {
         UpdateScoreboardServerRpc();
@@ -21,18 +23,27 @@ public class ScoreBoard : NetworkBehaviour
         PlayerStatsManager.OnKillCountChanged += UpdateScoreboard;
     }
 
+    private void UpdatePlayerList()
+    {
+        foreach (var player in FindObjectsOfType<PlayerStatsManager>())
+        {
+            if (!playerStatsManagers.ContainsKey(player.PlayerId))
+            {
+                playerStatsManagers[player.PlayerId] = player;
+                playerNumbers[player.PlayerId] = nextPlayerNumber++;
+                UpdateScoreboard();
+            }
+        }
+    }
+
     private void OnDisable()
     {
         // Unsubscribe to prevent memory leaks
         PlayerStatsManager.OnKillCountChanged -= UpdateScoreboard;
-    }
-
-    private void Update()
-    {
-        if (test)
+        // Clear local player data when leaving the game
+        if (!IsServer && !IsClient)
         {
-            test = false;
-            UpdateScoreboard();
+            ResetLocalPlayerData();
         }
     }
 
@@ -41,6 +52,7 @@ public class ScoreBoard : NetworkBehaviour
         // This method needs to collect all player stats and update the scoreboardText
         if (IsServer)
         {
+            UpdatePlayerList(); // Refresh the player list to account for any joins/leaves
             UpdateScoreBoardClientRpc();
         }
     }
@@ -59,21 +71,38 @@ public class ScoreBoard : NetworkBehaviour
 
     private IEnumerator UpdateScoreboardCoroutine()
     {
+        UpdatePlayerList();
         // Assuming you have a more efficient way to access player stats
         yield return new WaitForSeconds(1f); // Wait to ensure all data is up-to-date
 
         // Assuming you have a way to get all player stats managers
-        var playerStatsManagers = FindObjectsOfType<PlayerStatsManager>();
+        //var playerStatsManagers = FindObjectsOfType<PlayerStatsManager>();
+        //string scoreboardTextValue = "Player Kills:\n";
+        //int player = 1;
+        //foreach (var playerStats in playerStatsManagers)
+        //{
+        //    // Append each player's kill count to the string
+        //    scoreboardTextValue += $"Player {player}: {playerStats.killCount.Value} kills\n";
+        //    player++;
+        //}
+        //Debug.Log("Updating scoreboard text: " + scoreboardTextValue);
+        var sortedPlayers = playerNumbers.OrderBy(p => p.Value).ToList();
         string scoreboardTextValue = "Player Kills:\n";
-        int player = 1;
-        foreach (var playerStats in playerStatsManagers)
+        foreach (var playerStats in sortedPlayers)
         {
-            // Append each player's kill count to the string
-            scoreboardTextValue += $"Player {player}: {playerStats.killCount.Value} kills\n";
-            player++;
+            PlayerStatsManager stat = playerStatsManagers[playerStats.Key];
+            Color color = stat.playerColor.material.color;
+            string colorHex = ColorUtility.ToHtmlStringRGB(color);
+            scoreboardTextValue += $"<color=#{colorHex}>Player {playerStats.Value}: {stat.killCount.Value} kills</color>\n";
         }
-        Debug.Log("Updating scoreboard text: " + scoreboardTextValue);
-
         scoreboardText.text = scoreboardTextValue;
     }
+
+    public void ResetLocalPlayerData()
+    {
+        playerStatsManagers.Clear();
+        playerNumbers.Clear();
+        nextPlayerNumber = 1;
+    }
+
 }
