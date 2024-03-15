@@ -47,15 +47,11 @@ public class PlayerHealth : NetworkBehaviour
             {
                 health.Value = defaultHealth;
                 parentObject.GetComponent<PlayerStatsManager>().IncrementKillCount();
-                RespawnClientRpc();
-            }
-            else
-            {
-                // Check if the damage sound is already assigned to the audio source
-                if (audioSource.clip != damageDealt)
+                // Check if the death sound is already assigned to the audio source
+                if (audioSource.clip != deathYell)
                 {
                     // Assign the damage sound clip to the audio source
-                    audioSource.clip = damageDealt;
+                    audioSource.clip = deathYell;
                 }
                 // Check if the audio source is not already playing
                 if (!audioSource.isPlaying)
@@ -63,6 +59,12 @@ public class PlayerHealth : NetworkBehaviour
                     // Play the sliding sound
                     audioSource.Play();
                 }
+                RespawnClientRpc();
+            }
+            else
+            {
+                // Call the method to play death sound on all clients with positional audio
+                PlayDamageSoundClientRpc(transform.position);
             }
         }
         else
@@ -81,17 +83,15 @@ public class PlayerHealth : NetworkBehaviour
     public void RespawnClientRpc()
     {
         spawner.StartCoroutine(spawner.RespawnAfterDelay());
-        // Check if the death sound is already assigned to the audio source
-        if (audioSource.clip != deathYell)
+    }
+
+    [ClientRpc]
+    public void PlayDamageSoundClientRpc(Vector3 position)
+    {
+        // Play the damage sound with positional audio
+        if (damageDealt != null)
         {
-            // Assign the damage sound clip to the audio source
-            audioSource.clip = deathYell;
-        }
-        // Check if the audio source is not already playing
-        if (!audioSource.isPlaying)
-        {
-            // Play the sliding sound
-            audioSource.Play();
+            AudioSource.PlayClipAtPoint(damageDealt, position);
         }
     }
 }
