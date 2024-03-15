@@ -138,6 +138,7 @@ public class PlayerMovement : NetworkBehaviour
         transform.localScale = playerScale;
         transform.position = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
         audioSource.Stop();
+        StopClipServerRpc();
         sameSlide = false;
     }
 
@@ -204,6 +205,7 @@ public class PlayerMovement : NetworkBehaviour
         else if ((!grounded && !crouching) || rb.velocity.magnitude < 0.2f)
         {
             audioSource.Stop();
+            StopClipServerRpc();
         }
 
         //If speed is larger than maxspeed, cancel out the input so you don't go over max speed
