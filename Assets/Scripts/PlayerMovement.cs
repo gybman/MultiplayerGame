@@ -389,6 +389,21 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     [ClientRpc]
+    public void StopClipClientRpc()
+    {
+        if (!IsOwner)
+        {
+            GameObject.Find("One shot audio").GetComponent<AudioSource>().Stop();
+        }
+    }
+
+    [ServerRpc]
+    public void StopClipServerRpc()
+    {
+        StopClipClientRpc();
+    }
+
+    [ClientRpc]
     public void PlayerSlideClipClientRpc(Vector3 position)
     {
         if (!IsOwner)
