@@ -27,6 +27,8 @@ public class PlayerMovement : NetworkBehaviour
     public float maxSpeed = 20;
     public bool grounded;
     public LayerMask whatIsGround;
+    public AudioSource audioSource;
+    public AudioClip runningSound;
 
     public float counterMovement = 0.175f;
     private float threshold = 0.01f;
@@ -50,7 +52,9 @@ public class PlayerMovement : NetworkBehaviour
     //Sliding
     private Vector3 normalVector = Vector3.up;
     private Vector3 wallNormalVector;
-
+    public AudioClip slidingSound;
+    private bool sameSlide = false;
+    
     public override void OnNetworkSpawn()
     {
         if (!IsOwner) this.enabled = false;
@@ -111,6 +115,19 @@ public class PlayerMovement : NetworkBehaviour
             if (grounded)
             {
                 rb.AddForce(orientation.transform.forward * slideForce);
+                // Check if the sliding sound is already assigned to the audio source
+                if (audioSource.clip != slidingSound)
+                {
+                    // Assign the sliding sound clip to the audio source
+                    audioSource.clip = slidingSound;
+                }
+                // Check if the audio source is not already playing
+                if (!audioSource.isPlaying)
+                {
+                    // Play the sliding sound
+                    audioSource.Play();
+                    sameSlide = true;
+                }
             }
         }
     }
@@ -119,6 +136,8 @@ public class PlayerMovement : NetworkBehaviour
     {
         transform.localScale = playerScale;
         transform.position = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
+        audioSource.Stop();
+        sameSlide = false;
     }
 
     private void Movement()
@@ -143,7 +162,44 @@ public class PlayerMovement : NetworkBehaviour
         if (crouching && grounded && readyToJump)
         {
             rb.AddForce(Vector3.down * Time.deltaTime * 3000);
+            // Check if the sliding sound is already assigned to the audio source
+            if (!sameSlide)
+            {
+                if (audioSource.clip != slidingSound)
+                {
+                    // Assign the sliding sound clip to the audio source
+                    audioSource.clip = slidingSound;
+                }
+                // Check if the audio source is not already playing
+                if (!audioSource.isPlaying)
+                {
+                    // Play the sliding sound
+                    audioSource.Play();
+                    sameSlide = true;
+                }
+            }
             return;
+        }
+
+        // Play running sound when moving forward or backward and grounded but not crouching
+        if (grounded && !crouching && (y != 0 || x != 0))
+        {
+            // Check if the running sound is already assigned to the audio source
+            if (audioSource.clip != runningSound)
+            {
+                // Assign the running sound clip to the audio source
+                audioSource.clip = runningSound;
+            }
+            // Check if the audio source is not already playing
+            if (!audioSource.isPlaying)
+            {
+                // Play the running sound
+                audioSource.Play();
+            }
+        }
+        else if ((!grounded && !crouching) || rb.velocity.magnitude < 0.2f)
+        {
+            audioSource.Stop();
         }
 
         //If speed is larger than maxspeed, cancel out the input so you don't go over max speed
@@ -163,7 +219,10 @@ public class PlayerMovement : NetworkBehaviour
         }
 
         // Movement while sliding
-        if (grounded && crouching) multiplierV = 0f;
+        if (grounded && crouching)
+        {
+            multiplierV = 0f;
+        }
 
         //Apply forces to move player
         rb.AddForce(orientation.transform.forward * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
