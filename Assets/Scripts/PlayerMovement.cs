@@ -195,7 +195,8 @@ public class PlayerMovement : NetworkBehaviour
             {
                 // Play the running sound
                 audioSource.Play();
-                PlayerAudioClipClientRpc(transform.position);
+                PlayerAudioClipServerRpc(transform.position);
+                
             }
         }
         else if ((!grounded && !crouching) || rb.velocity.magnitude < 0.2f)
@@ -377,5 +378,11 @@ public class PlayerMovement : NetworkBehaviour
         {
             AudioSource.PlayClipAtPoint(runningSound, position);
         }
+    }
+
+    [ServerRpc]
+    public void PlayerAudioClipServerRpc(Vector3 position)
+    {
+        PlayerAudioClipClientRpc(position);
     }
 }
