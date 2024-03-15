@@ -48,13 +48,13 @@ public class PlayerHealth : NetworkBehaviour
                 health.Value = defaultHealth;
                 parentObject.GetComponent<PlayerStatsManager>().IncrementKillCount();
                 // Call the method to play death sound on all clients with positional audio
-                PlayDeathSoundClientRpc(transform.position);
+                PlayDeathSoundServerRpc(transform.position);
                 RespawnClientRpc();
             }
             else
             {
                 // Call the method to play death sound on all clients with positional audio
-                PlayDamageSoundClientRpc(transform.position);
+                PlayDamageSoundServerRpc(transform.position);
             }
         }
         else
@@ -85,6 +85,12 @@ public class PlayerHealth : NetworkBehaviour
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void PlayDamageSoundServerRpc(Vector3 position)
+    {
+        PlayDamageSoundClientRpc(position);
+    }
+
     [ClientRpc]
     public void PlayDeathSoundClientRpc(Vector3 position)
     {
@@ -93,5 +99,11 @@ public class PlayerHealth : NetworkBehaviour
         {
             AudioSource.PlayClipAtPoint(deathYell, position);
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void PlayDeathSoundServerRpc(Vector3 position)
+    {
+        PlayDeathSoundClientRpc(position);
     }
 }
