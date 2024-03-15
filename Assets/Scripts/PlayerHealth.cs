@@ -47,18 +47,8 @@ public class PlayerHealth : NetworkBehaviour
             {
                 health.Value = defaultHealth;
                 parentObject.GetComponent<PlayerStatsManager>().IncrementKillCount();
-                // Check if the death sound is already assigned to the audio source
-                if (audioSource.clip != deathYell)
-                {
-                    // Assign the damage sound clip to the audio source
-                    audioSource.clip = deathYell;
-                }
-                // Check if the audio source is not already playing
-                if (!audioSource.isPlaying)
-                {
-                    // Play the sliding sound
-                    audioSource.Play();
-                }
+                // Call the method to play death sound on all clients with positional audio
+                PlayDeathSoundClientRpc(transform.position);
                 RespawnClientRpc();
             }
             else
@@ -92,6 +82,16 @@ public class PlayerHealth : NetworkBehaviour
         if (damageDealt != null)
         {
             AudioSource.PlayClipAtPoint(damageDealt, position);
+        }
+    }
+
+    [ClientRpc]
+    public void PlayDeathSoundClientRpc(Vector3 position)
+    {
+        // Play the death sound with positional audio
+        if (deathYell != null)
+        {
+            AudioSource.PlayClipAtPoint(deathYell, position);
         }
     }
 }
