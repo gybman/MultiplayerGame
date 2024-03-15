@@ -395,7 +395,16 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!IsOwner)
         {
-            GameObject.Find("One shot audio").GetComponent<AudioSource>().Stop();
+            GameObject oneShotAudioObject = GameObject.Find("One shot audio");
+            if (oneShotAudioObject != null)
+            {
+                AudioSource audioSource = oneShotAudioObject.GetComponent<AudioSource>();
+                if (audioSource != null && (audioSource.clip == slidingSound || audioSource.clip == runningSound))
+                {
+                    Debug.Log("Stopping clip");
+                    audioSource.Stop();
+                }
+            }
         }
     }
 
