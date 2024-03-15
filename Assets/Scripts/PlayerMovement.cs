@@ -195,6 +195,7 @@ public class PlayerMovement : NetworkBehaviour
             {
                 // Play the running sound
                 audioSource.Play();
+                PlayerAudioClipClientRpc(transform.position);
             }
         }
         else if ((!grounded && !crouching) || rb.velocity.magnitude < 0.2f)
@@ -367,5 +368,14 @@ public class PlayerMovement : NetworkBehaviour
     private void StopGrounded()
     {
         grounded = false;
+    }
+
+    [ClientRpc]
+    public void PlayerAudioClipClientRpc(Vector3 position)
+    {
+        if (!IsOwner)
+        {
+            AudioSource.PlayClipAtPoint(runningSound, position);
+        }
     }
 }
