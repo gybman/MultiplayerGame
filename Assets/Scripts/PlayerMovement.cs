@@ -127,7 +127,7 @@ public class PlayerMovement : NetworkBehaviour
                     // Play the sliding sound
                     audioSource.Play();
                     sameSlide = true;
-                    PlayerAudioClipServerRpc(transform.position);
+                    PlayerSlideClipClientRpc(transform.position);
                 }
             }
         }
@@ -176,7 +176,7 @@ public class PlayerMovement : NetworkBehaviour
                 {
                     // Play the sliding sound
                     audioSource.Play();
-                    PlayerAudioClipServerRpc(transform.position);
+                    PlayerSlideClipClientRpc(transform.position);
                     sameSlide = true;
                 }
             }
