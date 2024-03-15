@@ -205,7 +205,7 @@ public class PlayerMovement : NetworkBehaviour
         else if ((!grounded && !crouching) || rb.velocity.magnitude < 0.2f)
         {
             audioSource.Stop();
-            //StopClipServerRpc();
+            StopClipServerRpc();
         }
 
         //If speed is larger than maxspeed, cancel out the input so you don't go over max speed
