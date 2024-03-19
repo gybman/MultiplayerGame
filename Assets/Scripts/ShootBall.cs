@@ -15,7 +15,7 @@ public class ShootBall : NetworkBehaviour
     [SerializeField] private GameObject player;
 
     //List to hold all the instantiated fireballs
-    private int spawnedBalls = 0;
+    public int spawnedBalls = 0;
 
     private const int maxBalls = 5;   // Max number of balls allowed
 
@@ -58,5 +58,9 @@ public class ShootBall : NetworkBehaviour
     public void ballDestroyed()
     {
         spawnedBalls--; // decrements count so the player can only shoot 5 at a time
+        if(spawnedBalls < 0)
+        {
+            spawnedBalls = 0;
+        }
     }
 }
