@@ -378,6 +378,7 @@ public class PlayerMovement : NetworkBehaviour
     [ClientRpc]
     public void PlayerAudioClipClientRpc(Vector3 position)
     {
+        // Plays positional footsteps to all players except the player who is creating them
         if (!IsOwner)
         {
             AudioSource.PlayClipAtPoint(runningSound, position);
@@ -387,11 +388,12 @@ public class PlayerMovement : NetworkBehaviour
     [ServerRpc]
     public void PlayerAudioClipServerRpc(Vector3 position)
     {
+        // Server calls the client rpc so all clients play the audio
         PlayerAudioClipClientRpc(position);
     }
 
     [ClientRpc]
-    public void StopClipClientRpc()
+    public void StopClipClientRpc() // This is used to correctly stop the audio when the player moving stops moving, this way the audio doesn't play all the way through even if the player has stopped moving
     {
         if (!IsOwner)
         {
@@ -411,7 +413,7 @@ public class PlayerMovement : NetworkBehaviour
     [ServerRpc]
     public void StopClipServerRpc()
     {
-        StopClipClientRpc();
+        StopClipClientRpc();    // Stops the audio for all clients so it is synced
     }
 
     [ClientRpc]
@@ -419,13 +421,13 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!IsOwner)
         {
-            AudioSource.PlayClipAtPoint(slidingSound, position);
+            AudioSource.PlayClipAtPoint(slidingSound, position);    // plays positional sliding audio for all players
         }
     }
 
     [ServerRpc]
     public void PlayerSlideClipServerRpc(Vector3 position)
     {
-        PlayerSlideClipClientRpc(position);
+        PlayerSlideClipClientRpc(position); // Servers calls the positional audio to all clients so they all hear it at the same time
     }
 }

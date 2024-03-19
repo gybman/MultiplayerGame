@@ -23,6 +23,7 @@ public class ScoreBoard : NetworkBehaviour
         PlayerStatsManager.OnKillCountChanged += UpdateScoreboard;
     }
 
+    // updates the player list when a player joins or leaves the game
     private void UpdatePlayerList()
     {
         foreach (var player in FindObjectsOfType<PlayerStatsManager>())
@@ -60,7 +61,7 @@ public class ScoreBoard : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void UpdateScoreboardServerRpc()
     {
-        UpdateScoreBoardClientRpc();
+        UpdateScoreBoardClientRpc();    // updates the scoreboard for all clients
     }
 
     [ClientRpc]
@@ -75,19 +76,10 @@ public class ScoreBoard : NetworkBehaviour
         // Assuming you have a more efficient way to access player stats
         yield return new WaitForSeconds(1f); // Wait to ensure all data is up-to-date
 
-        // Assuming you have a way to get all player stats managers
-        //var playerStatsManagers = FindObjectsOfType<PlayerStatsManager>();
-        //string scoreboardTextValue = "Player Kills:\n";
-        //int player = 1;
-        //foreach (var playerStats in playerStatsManagers)
-        //{
-        //    // Append each player's kill count to the string
-        //    scoreboardTextValue += $"Player {player}: {playerStats.killCount.Value} kills\n";
-        //    player++;
-        //}
-        //Debug.Log("Updating scoreboard text: " + scoreboardTextValue);
         var sortedPlayers = playerNumbers.OrderBy(p => p.Value).ToList();
         string scoreboardTextValue = "Player Kills:\n";
+        
+        // For loop goes through all players and correctly displays their scoreboard with color so each player knows who is who
         foreach (var playerStats in sortedPlayers)
         {
             PlayerStatsManager stat = playerStatsManagers[playerStats.Key];
@@ -98,6 +90,7 @@ public class ScoreBoard : NetworkBehaviour
         scoreboardText.text = scoreboardTextValue;
     }
 
+    // resets all player stats and scoreboard
     public void ResetLocalPlayerData()
     {
         playerStatsManagers.Clear();

@@ -63,12 +63,14 @@ public class PlayerSpawner : NetworkBehaviour
         player.transform.position = respawnPosition;
     }
 
+    // Stops player from moving/shooting
     public void DisablePlayer()
     {
         player.SetActive(false);
         gun.GetComponent<ShootBall>().enabled = false;
     }
 
+    // Reactivates player movement and shooting
     public void EnablePlayer()
     {
         player.SetActive(true);

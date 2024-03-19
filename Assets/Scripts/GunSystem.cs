@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 using Unity.Netcode;
-
+// NO LONGER USING THIS AS I SCRATCHED THE GUN SYSTEM IDEA
 public class GunSystem : NetworkBehaviour
 {
     // Gun stats

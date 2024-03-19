@@ -19,12 +19,13 @@ public class ExitScript : NetworkBehaviour
 
     private void Update()
     {
+        // When pressing Esc, either turn off or on the exit option
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (!displaying)
             {
                 playerExitUI.SetActive(true);
-                gun.SetActive(false);
+                gun.SetActive(false);   // disable weapon when exit screen is active
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
                 displaying = true;
@@ -32,7 +33,7 @@ public class ExitScript : NetworkBehaviour
             else
             {
                 playerExitUI.SetActive(false);
-                gun.SetActive(true);
+                gun.SetActive(true);    // disable weapon when exit screen is active
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
                 displaying = false;
@@ -45,7 +46,7 @@ public class ExitScript : NetworkBehaviour
         // If using Unity Netcode, disconnect the client or stop the host
         if (NetworkManager.Singleton.IsHost)
         {
-            RemovePlayersClientRpc();
+            RemovePlayersClientRpc();   // if host disconnects, disconnect all clients too
             NetworkManager.Singleton.Shutdown();
         }
         else if (NetworkManager.Singleton.IsClient)

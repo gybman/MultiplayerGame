@@ -7,13 +7,16 @@ public class PlayerHealth : NetworkBehaviour
 {
     public NetworkVariable<int> health = new NetworkVariable<int>();
 
+    // health stats
     public int defaultHealth = 3;
     public float respawnDelay = 3f;
 
+    // Audio
     public AudioSource audioSource;
     public AudioClip damageDealt;
     public AudioClip deathYell;
 
+    // references
     [SerializeField] private PlayerSpawner spawner;
     private GameObject parentObject;
 
@@ -21,12 +24,13 @@ public class PlayerHealth : NetworkBehaviour
     {
         if (IsServer)
         {
-            health.Value = defaultHealth;
+            health.Value = defaultHealth;   // set all players health the default health when first joining the game
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        // Only the server can adjust the health in order to keep all health synced amongst players
         if (IsServer)
         {
             if (other.CompareTag("Bullet") && other.GetComponent<MoveProjectiles>().playerOwner != this.gameObject)
@@ -43,6 +47,7 @@ public class PlayerHealth : NetworkBehaviour
         {
             health.Value -= damage;
 
+            // if the host loses all its health, play the death sound for all players and respawn the dead player
             if (health.Value <= 0)
             {
                 health.Value = defaultHealth;
@@ -59,6 +64,7 @@ public class PlayerHealth : NetworkBehaviour
         }
         else
         {
+            // if client takes damage, request the server to update and sync health
             TakeDamageServerRpc();
         }
     }
@@ -88,6 +94,7 @@ public class PlayerHealth : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void PlayDamageSoundServerRpc(Vector3 position)
     {
+        // Calls client rpc so all clients hear the sound in the correct location
         PlayDamageSoundClientRpc(position);
     }
 
@@ -104,6 +111,7 @@ public class PlayerHealth : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void PlayDeathSoundServerRpc(Vector3 position)
     {
+        // Calls client rpc so all clients hear the sound in the correct location
         PlayDeathSoundClientRpc(position);
     }
 }

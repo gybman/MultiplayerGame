@@ -9,6 +9,7 @@ public class DisableCameraForNonLocalPlayers : MonoBehaviour
 
     void Start()
     {
+        // Disables the camera for non-local players
         if (GetComponent<NetworkObject>().IsLocalPlayer == false)
         {
             cameraObject.SetActive(false);

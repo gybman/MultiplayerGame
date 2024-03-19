@@ -11,7 +11,7 @@ public class PlayerStatsManager : NetworkBehaviour
     public Renderer playerColor;
     public ulong PlayerId => NetworkObjectId; // Using NetworkObjectId as a unique identifier
 
-    public static event Action OnKillCountChanged;
+    public static event Action OnKillCountChanged;  // Creates an event that can be subscribed to
 
     // Method to increment kill count
     public void IncrementKillCount()
@@ -34,15 +34,15 @@ public class PlayerStatsManager : NetworkBehaviour
     private void IncrementKillCountServerRpc()
     {
         killCount.Value++;
-        OnKillCountChanged?.Invoke();
+        OnKillCountChanged?.Invoke();   // activates event
     }
 
     public void ResetKillCount()
     {
         if (IsServer)
         {
-            killCount.Value = 0;
-            OnKillCountChanged?.Invoke();
+            killCount.Value = 0;    // resets the kill count when the game restarts
+            OnKillCountChanged?.Invoke();   // activates event
         }
     }
 
@@ -50,7 +50,7 @@ public class PlayerStatsManager : NetworkBehaviour
     {
         base.OnNetworkDespawn();
 
-        FindObjectOfType<ScoreBoard>().ResetLocalPlayerData();
+        FindObjectOfType<ScoreBoard>().ResetLocalPlayerData();  // resets stats for all players
     }
 
 }

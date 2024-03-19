@@ -9,6 +9,7 @@ using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
 
+// This script is used to allow global matchmaking using unity's relay system
 public class SimpleRelayMenu : MonoBehaviour
 {
     [SerializeField] private TMP_Text _joinCodeText;
@@ -37,6 +38,7 @@ public class SimpleRelayMenu : MonoBehaviour
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
 
+    // Function for the the create button which makes the player a host and gives them a unique code so others can join
     public async void CreateGame()
     {
         _buttons.SetActive(false);
@@ -51,6 +53,7 @@ public class SimpleRelayMenu : MonoBehaviour
         NetworkManager.Singleton.StartHost();
     }
 
+    // used to join a host as a client by entering the unique code assigned to the host's game
     public async void JoinGame()
     {
         _buttons.SetActive(false);
@@ -76,6 +79,7 @@ public class SimpleRelayMenu : MonoBehaviour
         }
     }
 
+    // used to turn on or off the menu when the player returns to the menu screen
     public void ActivateMenu()
     {
         _buttons.SetActive(true);

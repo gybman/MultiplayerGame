@@ -85,6 +85,7 @@ public class Timer : NetworkBehaviour
 
     private void UpdateTimerUI(int time)
     {
+        // used to display the time correctly
         int minutes = time / 60;
         int seconds = time % 60;
         timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
@@ -110,6 +111,7 @@ public class Timer : NetworkBehaviour
     [ClientRpc]
     public void RemovePlayersClientRpc()
     {
+        // when the host leaves the game, it calls this function in order to remove all clients safely from the game without making them freeze
         relayScript.ActivateMenu();
         endScreen.SetActive(false);
         Cursor.lockState = CursorLockMode.None;

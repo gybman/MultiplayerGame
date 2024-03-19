@@ -32,6 +32,7 @@ public class ShootBall : NetworkBehaviour
         }
     }
 
+    // function for shooting the player and assigning all necessary parameters
     private void Shoot()
     {
         GameObject fireball = Instantiate(fireballPrefab, shootTransform.position, shootTransform.rotation);
@@ -44,7 +45,7 @@ public class ShootBall : NetworkBehaviour
     [ServerRpc]
     private void ShootServerRpc()
     {
-        ShootClientRpc();
+        ShootClientRpc();   // creates the ball locally on all players
     }
 
     [ClientRpc]
@@ -56,6 +57,6 @@ public class ShootBall : NetworkBehaviour
 
     public void ballDestroyed()
     {
-        spawnedBalls--;
+        spawnedBalls--; // decrements count so the player can only shoot 5 at a time
     }
 }

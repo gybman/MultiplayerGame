@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 public class PlayerVisual : NetworkBehaviour
 {
     private readonly NetworkVariable<Color> _netColor = new();
-    private readonly Color[] _colors = { Color.red, Color.blue, Color.green, Color.yellow };
+    private readonly Color[] _colors = { Color.red, Color.blue, Color.green, Color.yellow };    // allows different colors for players who join the game
     private int _index;
 
     [SerializeField] private MeshRenderer _renderer;

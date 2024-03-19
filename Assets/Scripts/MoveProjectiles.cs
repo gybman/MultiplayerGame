@@ -24,6 +24,7 @@ public class MoveProjectiles : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // if the ball hits anything other than the player who shot it, destroy it with the particle effect
         if(other.gameObject != playerOwner)
         {
             GameObject hitImpact = Instantiate(hitParticles, transform.position, Quaternion.identity);
