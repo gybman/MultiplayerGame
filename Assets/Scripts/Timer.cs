@@ -14,7 +14,7 @@ public class Timer : NetworkBehaviour
 
     private SimpleRelayMenu relayScript;
 
-    private const int totalTime = 60; // 10 minutes in seconds
+    private const int totalTime = 600; // 10 minutes in seconds
 
     public override void OnNetworkSpawn()
     {
